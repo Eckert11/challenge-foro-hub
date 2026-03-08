@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.alura.forohub.domain.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,9 @@ public class TokenService {
 
     @Value("${api.security.secret}")
     private String secret;
+
+    @Value("${api.security.expiration}")
+    private int expirationTime; // en segundos
 
     public String generarToken(Usuario usuario) {
         try {
@@ -47,6 +49,8 @@ public class TokenService {
     }
 
     private Instant generarFechaExpiracion() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-06:00"));
+        return LocalDateTime.now()
+                .plusSeconds(expirationTime)
+                .toInstant(ZoneOffset.of("-06:00"));
     }
 }
