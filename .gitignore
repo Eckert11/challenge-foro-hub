@@ -29,3 +29,9 @@ Thumbs.db
 # Logs
 logs/
 *.log
+# Archivos de configuración con credenciales
+application-local.properties
+application-dev.properties
+application-prod.properties
+*.db
+*.sql
