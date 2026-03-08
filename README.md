@@ -1,37 +1,86 @@
 # 💬 Challenge Foro Hub
 
-![Badge en Desarrollo](https://img.shields.io/badge/STATUS-EN%20DESARROLLO-green)
+![Status](https://img.shields.io/badge/STATUS-FINALIZADO-green)
 ![Java](https://img.shields.io/badge/Java-17-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![JWT](https://img.shields.io/badge/JWT-JSON%20Web%20Token-purple)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-85%25-yellow)
 
 ---
 
-## 📋 Descripción del Proyecto
+# 📋 Descripción del Proyecto
 
-API REST para un foro desarrollada con **Spring Boot** como parte del **Challenge de Alura Latam**.  
-Permite a los usuarios **crear, listar, actualizar y eliminar tópicos**.
+API REST para un **foro de discusión** desarrollada con **Spring Boot** como parte del **Challenge de Alura Latam**.
+
+La aplicación permite:
+
+- Crear tópicos
+- Listar tópicos
+- Actualizar tópicos
+- Eliminar tópicos
+- Buscar tópicos
+- Autenticación mediante **JWT**
 
 ---
 
 # 🚀 Funcionalidades Implementadas
 
-## ✅ Endpoints Disponibles
+## 📡 Endpoints Disponibles
 
-| Método | Endpoint | Descripción | Status |
+| Método | Endpoint | Descripción | Autenticación |
 |------|------|------|------|
-| POST | `/topicos` | Crear un nuevo tópico | ✅ Implementado |
-| GET | `/topicos` | Listar todos los tópicos | ✅ Implementado |
-| GET | `/topicos/{id}` | Detalle de un tópico específico | ✅ Implementado |
-| PUT | `/topicos/{id}` | Actualizar un tópico | ✅ Implementado |
-| DELETE | `/topicos/{id}` | Eliminar un tópico | ✅ Implementado |
-| GET | `/topicos/paginado` | Listado paginado | ✅ Implementado |
-| GET | `/topicos/buscar` | Búsqueda por curso/año | ✅ Implementado |
+| POST | `/login` | Obtener token JWT | ❌ Público |
+| POST | `/topicos` | Crear un nuevo tópico | ✅ Requiere token |
+| GET | `/topicos` | Listar todos los tópicos | ✅ Requiere token |
+| GET | `/topicos/{id}` | Detalle de un tópico específico | ✅ Requiere token |
+| PUT | `/topicos/{id}` | Actualizar un tópico | ✅ Requiere token |
+| DELETE | `/topicos/{id}` | Eliminar un tópico | ✅ Requiere token |
+| GET | `/topicos/paginado` | Listado paginado | ✅ Requiere token |
+| GET | `/topicos/buscar` | Búsqueda por curso/año | ✅ Requiere token |
 
 ---
 
-# 📊 Ejemplos de Uso
+# 🔐 Autenticación
+
+La API utiliza **JWT (JSON Web Tokens)** para proteger los endpoints.
+
+Para acceder a los endpoints protegidos primero debes **obtener un token**.
+
+## Login
+
+### Request
+
+```http
+POST /login
+Content-Type: application/json
+
+{
+  "login": "admin",
+  "password": "123456"
+}
+```
+
+### Respuesta
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+## Uso del Token
+
+Incluye el token en el **header Authorization** de cada petición:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+---
+
+# 📊 Ejemplo de Uso
 
 ## Crear un tópico
 
@@ -64,16 +113,60 @@ POST /topicos
 
 ---
 
+# 🚀 Ejemplo de Flujo Completo
+
+## 1️⃣ Obtener Token
+
+```bash
+curl -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{"login":"admin","password":"123456"}'
+```
+
+---
+
+## 2️⃣ Usar Token para Crear un Tópico
+
+```bash
+curl -X POST http://localhost:8080/topicos \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_AQUI" \
+  -d '{
+    "titulo": "Mi primer tópico",
+    "mensaje": "Probando la API",
+    "autor": "Juan Pérez",
+    "curso": "Spring Boot"
+  }'
+```
+
+---
+
 # 🛠️ Tecnologías Utilizadas
 
-- Java 17
-- Spring Boot 3.2.4
-- Spring Data JPA
-- Spring Security *(próximamente)*
-- PostgreSQL 17
-- Flyway Migration
-- Lombok
-- Maven
+- **Java 17**
+- **Spring Boot 4.0.3**
+- **Spring Data JPA**
+- **Spring Security**
+- **JWT**
+- **PostgreSQL 17**
+- **Flyway Migration**
+- **Lombok**
+- **Maven**
+
+---
+
+# ⚙️ Variables de Entorno
+
+El proyecto requiere las siguientes variables de entorno:
+
+| Variable | Descripción | Valor por defecto |
+|------|------|------|
+| `DB_USER` | Usuario de PostgreSQL | `postgres` |
+| `DB_PASSWORD` | Contraseña de PostgreSQL | requerido |
+| `JWT_SECRET` | Secreto para firmar tokens | requerido |
+| `DB_HOST` | Host de la base de datos | `localhost` |
+| `DB_PORT` | Puerto PostgreSQL | `5432` |
+| `DB_NAME` | Nombre de la base de datos | `foro_hub_db` |
 
 ---
 
@@ -81,21 +174,9 @@ POST /topicos
 
 ## Requisitos Previos
 
-- JDK 17+
-- Maven 3.6+
-- PostgreSQL 17+
-
----
-
-## Variables de Entorno (Producción)
-
-```bash
-export DB_USER=tu_usuario
-export DB_PASSWORD=tu_contraseña
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_NAME=foro_hub_db
-```
+- **JDK 17+**
+- **Maven 3.6+**
+- **PostgreSQL 17+**
 
 ---
 
@@ -105,14 +186,20 @@ export DB_NAME=foro_hub_db
 # Clonar repositorio
 git clone https://github.com/Eckert11/challenge-foro-hub.git
 
-# Entrar al directorio
+# Entrar al proyecto
 cd challenge-foro-hub
 
-# Compilar
+# Compilar proyecto
 ./mvnw clean compile
 
-# Ejecutar
+# Ejecutar aplicación
 ./mvnw spring-boot:run
+```
+
+La API estará disponible en:
+
+```
+http://localhost:8080
 ```
 
 ---
